@@ -31,7 +31,7 @@ final class ApproveInvoiceAction
             ApprovalId::fromString($approvalId)
         );
 
-        if (!$approval instanceof \App\Domain\Approval\Aggregates\Approval) {
+        if (! $approval instanceof \App\Domain\Approval\Aggregates\Approval) {
             throw new InvalidApprovalException(
                 sprintf('Approval with ID %s not found.', $approvalId)
             );

@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\InvoiceController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
