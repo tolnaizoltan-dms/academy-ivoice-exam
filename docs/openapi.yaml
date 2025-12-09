@@ -1,0 +1,301 @@
+openapi: 3.0.3
+info:
+  title: Jóváhagyási Folyamat API
+  description: |
+    DMS One Fejlesztői Akadémia Vizsgafeladat - Jóváhagyási Folyamat API
+    
+    Ez az API lehetővé teszi számlák benyújtását és jóváhagyási folyamatuk kezelését.
+    
+    ## Use Case
+    
+    > "Egy ügyintéző benyújt egy számlát, ami ezzel automatikusan átkerül a feletteséhez jóváhagyásra."
+    
+    ## Bounded Contexts
+    
+    - **Számlabefogadás (Invoice Reception)**: Nyers adatokból érvényes, befogadott számlát létrehozni
+    - **Jóváhagyás (Approval)**: Befogadott számlák jóváhagyási/elutasítási folyamatának menedzselése
+  version: 1.0.0
+  contact:
+    name: DMS One Fejlesztői Akadémia
+
+servers:
+  - url: http://localhost/api/v1
+    description: Local development server
+
+tags:
+  - name: Invoices
+    description: Számla benyújtás műveletek
+  - name: Approvals
+    description: Jóváhagyási műveletek
+
+paths:
+  /invoices:
+    post:
+      tags:
+        - Invoices
+      summary: Submit Invoice
+      description: |
+        Új számla benyújtása. A számla benyújtása automatikusan elindítja 
+        a jóváhagyási folyamatot a megadott felettes számára.
+      operationId: submitInvoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitInvoiceRequest'
+            example:
+              invoiceNumber: "INV-2025-0001"
+              amount: 15000.50
+              submitterId: "550e8400-e29b-41d4-a716-446655440000"
+              supervisorId: "550e8400-e29b-41d4-a716-446655440001"
+      responses:
+        '201':
+          description: Számla sikeresen benyújtva
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitInvoiceResponse'
+              example:
+                invoiceId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                invoiceNumber: "INV-2025-0001"
+                amount: 15000.50
+                status: "submitted"
+                message: "Invoice submitted successfully. Approval process has been started."
+        '422':
+          description: Validációs hiba
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                message: "The invoice number field format is invalid."
+                errors:
+                  invoiceNumber:
+                    - "Invoice number must be in format INV-YYYY-XXXX (e.g., INV-2025-0001)."
+
+  /approvals/{id}/approve:
+    put:
+      tags:
+        - Approvals
+      summary: Approve Invoice
+      description: Számla jóváhagyása a megadott jóváhagyási azonosító alapján.
+      operationId: approveInvoice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A jóváhagyás egyedi azonosítója (UUID)
+          schema:
+            type: string
+            format: uuid
+          example: "approval-uuid-here"
+      responses:
+        '200':
+          description: Számla sikeresen jóváhagyva
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApproveInvoiceResponse'
+              example:
+                approvalId: "approval-uuid"
+                invoiceId: "invoice-uuid"
+                status: "approved"
+                message: "Invoice approved successfully."
+        '404':
+          description: Jóváhagyás nem található
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '422':
+          description: Érvénytelen státuszváltás
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainError'
+
+  /approvals/{id}/reject:
+    put:
+      tags:
+        - Approvals
+      summary: Reject Invoice
+      description: Számla elutasítása a megadott indoklással.
+      operationId: rejectInvoice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A jóváhagyás egyedi azonosítója (UUID)
+          schema:
+            type: string
+            format: uuid
+          example: "approval-uuid-here"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejectInvoiceRequest'
+            example:
+              reason: "Insufficient documentation provided."
+      responses:
+        '200':
+          description: Számla sikeresen elutasítva
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RejectInvoiceResponse'
+              example:
+                approvalId: "approval-uuid"
+                invoiceId: "invoice-uuid"
+                status: "rejected"
+                reason: "Insufficient documentation provided."
+                message: "Invoice rejected successfully."
+        '404':
+          description: Jóváhagyás nem található
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '422':
+          description: Érvénytelen státuszváltás vagy hiányzó indoklás
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainError'
+
+components:
+  schemas:
+    SubmitInvoiceRequest:
+      type: object
+      required:
+        - invoiceNumber
+        - amount
+        - submitterId
+        - supervisorId
+      properties:
+        invoiceNumber:
+          type: string
+          pattern: '^INV-\d{4}-\d{4}$'
+          description: "Számla azonosító INV-YYYY-XXXX formátumban"
+          example: "INV-2025-0001"
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: "Számla összege (pozitív szám)"
+          example: 15000.50
+        submitterId:
+          type: string
+          format: uuid
+          description: "A benyújtó ügyintéző UUID azonosítója"
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        supervisorId:
+          type: string
+          format: uuid
+          description: "A felettes (jóváhagyó) UUID azonosítója"
+          example: "550e8400-e29b-41d4-a716-446655440001"
+
+    SubmitInvoiceResponse:
+      type: object
+      properties:
+        invoiceId:
+          type: string
+          format: uuid
+          description: "A létrehozott számla UUID azonosítója"
+        invoiceNumber:
+          type: string
+          description: "A számla azonosítója"
+        amount:
+          type: number
+          format: double
+          description: "A számla összege"
+        status:
+          type: string
+          enum: [submitted]
+          description: "A számla státusza"
+        message:
+          type: string
+          description: "Visszajelzés üzenet"
+
+    RejectInvoiceRequest:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          minLength: 1
+          description: "Az elutasítás indoklása"
+          example: "Insufficient documentation provided."
+
+    ApproveInvoiceResponse:
+      type: object
+      properties:
+        approvalId:
+          type: string
+          format: uuid
+          description: "A jóváhagyás UUID azonosítója"
+        invoiceId:
+          type: string
+          format: uuid
+          description: "A számla UUID azonosítója"
+        status:
+          type: string
+          enum: [approved]
+          description: "A jóváhagyás státusza"
+        message:
+          type: string
+          description: "Visszajelzés üzenet"
+
+    RejectInvoiceResponse:
+      type: object
+      properties:
+        approvalId:
+          type: string
+          format: uuid
+          description: "A jóváhagyás UUID azonosítója"
+        invoiceId:
+          type: string
+          format: uuid
+          description: "A számla UUID azonosítója"
+        status:
+          type: string
+          enum: [rejected]
+          description: "A jóváhagyás státusza"
+        reason:
+          type: string
+          description: "Az elutasítás indoklása"
+        message:
+          type: string
+          description: "Visszajelzés üzenet"
+
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: "Általános hibaüzenet"
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: "Mezőnkénti validációs hibák"
+
+    NotFoundError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Approval not found."
+
+    DomainError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Cannot approve an already processed approval."
+

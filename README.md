@@ -1,59 +1,207 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Jóváhagyási Folyamat - DMS One Fejlesztői Akadémia Vizsgafeladat
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Projekt Áttekintés
 
-## About Laravel
+Ez a projekt a DMS One Fejlesztői Akadémia vizsgafeladata, amely egy **Jóváhagyási Folyamat** vertical slice implementációja Domain-Driven Design (DDD) elvek alapján.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Use Case
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+> **"Egy ügyintéző benyújt egy számlát, ami ezzel automatikusan átkerül a feletteséhez jóváhagyásra."**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Architektúra
 
-## Learning Laravel
+A projekt **Hexagonal Architecture (Ports & Adapters)** mintát követ, két Bounded Context-tel:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Bounded Contexts
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. **Számlabefogadás (Invoice Reception)**
+   - Felelősség: Nyers adatokból érvényes, befogadott számlát létrehozni
+   - Aggregate: `Invoice`
+   - Domain Event: `InvoiceSubmitted`
 
-## Laravel Sponsors
+2. **Jóváhagyás (Approval)**
+   - Felelősség: Befogadott számlák jóváhagyási/elutasítási folyamatának menedzselése
+   - Aggregate: `Approval`
+   - Domain Events: `ApprovalProcessStarted`, `InvoiceApproved`, `InvoiceRejected`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Policy (Automatizmus)
 
-### Premium Partners
+```
+InvoiceSubmitted → [Policy: StartApprovalProcessListener] → Approval created with PENDING status
+```
+## 🔧 Technológiai Stack
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **PHP**: 8.2+
+- **Framework**: Laravel 12
+- **Testing**: Pest 4 + Laravel Plugin
+- **Database**: MySQL 8.0 (SQLite for tests)
+- **Container**: Docker (Laravel Sail)
 
-## Contributing
+## Telepítés és Indítás
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Követelmények
 
-## Code of Conduct
+- Docker & Docker Compose
+- Git
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Telepítés
 
-## Security Vulnerabilities
+```bash
+# 1. Klónozás
+git clone <repo-url>
+cd invoice
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 2. Environment setup
+cp .env.example .env
 
-## License
+# 3. Build & Install
+./vendor/bin/sail up -d
+./vendor/bin/sail composer install
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 4. Health check
+./vendor/bin/sail exec laravel.test curl http://localhost/up
+```
+
+### Leállítás
+
+```bash
+./vendor/bin/sail down
+```
+
+## API Használat
+
+A teljes API dokumentáció OpenAPI 3.0 formátumban elérhető: [`docs/openapi.yaml`](docs/openapi.yaml)
+
+### Endpoints
+
+| Művelet | Endpoint | Leírás |
+|---------|----------|--------|
+| Submit Invoice | `POST /api/v1/invoices` | Új számla benyújtása |
+| Approve Invoice | `PUT /api/v1/approvals/{id}/approve` | Számla jóváhagyása |
+| Reject Invoice | `PUT /api/v1/approvals/{id}/reject` | Számla elutasítása |
+
+### cURL Példák
+
+**Submit Invoice:**
+```bash
+curl -X POST http://localhost/api/v1/invoices \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "invoiceNumber": "INV-2025-0001",
+    "amount": 15000.50,
+    "submitterId": "550e8400-e29b-41d4-a716-446655440000",
+    "supervisorId": "550e8400-e29b-41d4-a716-446655440001"
+  }'
+```
+
+**Approve Invoice:**
+```bash
+curl -X PUT http://localhost/api/v1/approvals/{approval-id}/approve \
+  -H "Accept: application/json"
+```
+
+**Reject Invoice:**
+```bash
+curl -X PUT http://localhost/api/v1/approvals/{approval-id}/reject \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"reason": "Insufficient documentation provided."}'
+```
+
+## Tesztelés
+
+### Tesztek Futtatása
+
+```bash
+# Összes teszt
+./vendor/bin/sail test
+
+# Coverage riport
+./vendor/bin/sail test --coverage
+
+# Specifikus teszt
+./vendor/bin/sail test --filter InvoiceTest
+
+# Unit tesztek
+./vendor/bin/sail test tests/Unit
+
+# Feature (integration) tesztek
+./vendor/bin/sail test tests/Feature
+```
+
+### Test Típusok
+
+| Típus | Leírás | Darabszám |
+|-------|--------|-----------|
+| Unit | Value Objects, Aggregates, Actions | 92 |
+| Feature | API Integration, Vertical Slice | 23 |
+| **Total** | | **115** |
+
+## DDD Implementáció
+
+### Value Objects
+
+Immutable objektumok validációval:
+- `InvoiceId`, `InvoiceNumber`, `Amount`, `SubmitterId`
+- `ApprovalId`, `ApproverId`, `ApprovalStatus` (Enum)
+
+### Aggregates
+
+- **Invoice**: Factory method (`submit()`), event recording
+- **Approval**: Factory method (`start()`), state transitions (`approve()`, `reject()`)
+
+### Domain Events
+
+Laravel Events használatával:
+- `InvoiceSubmitted`
+- `ApprovalProcessStarted`
+- `InvoiceApproved`
+- `InvoiceRejected`
+
+### Domain Exceptions
+
+- `InvalidInvoiceException`
+- `InvalidApprovalException`
+
+## Logolás
+
+A Policy végrehajtása logolja az automatizált folyamatot:
+
+```
+[INFO] Policy triggered: Starting approval process for submitted invoice
+       {"invoice_id": "...", "invoice_number": "INV-2025-0001", ...}
+
+[INFO] Approval process started successfully
+       {"approval_id": "...", "invoice_id": "...", "status": "pending"}
+```
+
+Log fájl: `storage/logs/laravel.log`
+
+## Docker
+
+A projekt Laravel Sail-t használ, ami Docker Compose-ra épül.
+
+**Szolgáltatások:**
+- `laravel.test` - PHP 8.4 + Nginx
+- `mysql` - MySQL 8.0
+
+**Konfiguráció:** `compose.yaml`
+
+## Modern PHP Features
+
+- `readonly` properties (PHP 8.1+)
+- Backed Enums (`ApprovalStatus`)
+- Constructor Property Promotion
+- Named Arguments
+- Typed Properties
+- Match Expression (status transitions)
+
+## Hivatkozások
+
+- [Laravel 12 Documentation](https://laravel.com/docs/12.x)
+- [Pest Testing Framework](https://pestphp.com/)
+- [DDD Aggregates](https://martinfowler.com/bliki/DDD_Aggregate.html)
+- [Event Storming](https://www.eventstorming.com/)
