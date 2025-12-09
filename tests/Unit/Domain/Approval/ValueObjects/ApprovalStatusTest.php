@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Domain\Approval\ValueObjects\ApprovalStatus;
 
-describe('ApprovalStatus Enum', function () {
-    it('has pending status', function () {
+describe('ApprovalStatus Enum', function (): void {
+    it('has pending status', function (): void {
         $status = ApprovalStatus::PENDING;
 
         expect($status->value)->toBe('pending');
@@ -13,7 +13,7 @@ describe('ApprovalStatus Enum', function () {
         expect($status->isComplete())->toBeFalse();
     });
 
-    it('has approved status', function () {
+    it('has approved status', function (): void {
         $status = ApprovalStatus::APPROVED;
 
         expect($status->value)->toBe('approved');
@@ -21,7 +21,7 @@ describe('ApprovalStatus Enum', function () {
         expect($status->isComplete())->toBeTrue();
     });
 
-    it('has rejected status', function () {
+    it('has rejected status', function (): void {
         $status = ApprovalStatus::REJECTED;
 
         expect($status->value)->toBe('rejected');
@@ -29,7 +29,7 @@ describe('ApprovalStatus Enum', function () {
         expect($status->isComplete())->toBeTrue();
     });
 
-    it('can be created from string value', function () {
+    it('can be created from string value', function (): void {
         $pending = ApprovalStatus::from('pending');
         $approved = ApprovalStatus::from('approved');
         $rejected = ApprovalStatus::from('rejected');

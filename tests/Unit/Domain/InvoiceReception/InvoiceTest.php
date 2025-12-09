@@ -10,8 +10,8 @@ use App\Domain\InvoiceReception\ValueObjects\InvoiceId;
 use App\Domain\InvoiceReception\ValueObjects\InvoiceNumber;
 use App\Domain\InvoiceReception\ValueObjects\SubmitterId;
 
-describe('Invoice Aggregate', function () {
-    it('can submit a valid invoice', function () {
+describe('Invoice Aggregate', function (): void {
+    it('can submit a valid invoice', function (): void {
         $invoice = Invoice::submit(
             id: InvoiceId::generate(),
             number: new InvoiceNumber('INV-2025-0001'),
@@ -28,7 +28,7 @@ describe('Invoice Aggregate', function () {
         expect($invoice->getSubmittedAt())->toBeInstanceOf(DateTimeImmutable::class);
     });
 
-    it('raises InvoiceSubmitted event when submitted', function () {
+    it('raises InvoiceSubmitted event when submitted', function (): void {
         $invoice = Invoice::submit(
             id: InvoiceId::generate(),
             number: new InvoiceNumber('INV-2025-0001'),
@@ -47,7 +47,7 @@ describe('Invoice Aggregate', function () {
         expect($events[0]->supervisorId)->toBe('supervisor-456');
     });
 
-    it('clears events after release', function () {
+    it('clears events after release', function (): void {
         $invoice = Invoice::submit(
             id: InvoiceId::generate(),
             number: new InvoiceNumber('INV-2025-0001'),
@@ -63,7 +63,7 @@ describe('Invoice Aggregate', function () {
         expect($events2)->toHaveCount(0);
     });
 
-    it('throws exception for empty supervisor id', function () {
+    it('throws exception for empty supervisor id', function (): void {
         Invoice::submit(
             id: InvoiceId::generate(),
             number: new InvoiceNumber('INV-2025-0001'),
@@ -73,7 +73,7 @@ describe('Invoice Aggregate', function () {
         );
     })->throws(InvalidInvoiceException::class, 'Supervisor ID cannot be empty');
 
-    it('preserves invoice id', function () {
+    it('preserves invoice id', function (): void {
         $id = InvoiceId::generate();
 
         $invoice = Invoice::submit(

@@ -11,8 +11,8 @@ use App\Domain\Approval\ValueObjects\ApprovalId;
 use App\Domain\Approval\ValueObjects\ApprovalStatus;
 use App\Domain\Approval\ValueObjects\ApproverId;
 
-describe('Approval Aggregate', function () {
-    it('can start an approval process', function () {
+describe('Approval Aggregate', function (): void {
+    it('can start an approval process', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -27,7 +27,7 @@ describe('Approval Aggregate', function () {
         expect($approval->getCompletedAt())->toBeNull();
     });
 
-    it('raises ApprovalProcessStarted event when started', function () {
+    it('raises ApprovalProcessStarted event when started', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -42,7 +42,7 @@ describe('Approval Aggregate', function () {
         expect($events[0]->approverId)->toBe('supervisor-456');
     });
 
-    it('can approve a pending approval', function () {
+    it('can approve a pending approval', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -56,7 +56,7 @@ describe('Approval Aggregate', function () {
         expect($approval->getCompletedAt())->toBeInstanceOf(DateTimeImmutable::class);
     });
 
-    it('raises InvoiceApproved event when approved', function () {
+    it('raises InvoiceApproved event when approved', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -72,7 +72,7 @@ describe('Approval Aggregate', function () {
         expect($events[0]->invoiceId)->toBe('invoice-123');
     });
 
-    it('can reject a pending approval with reason', function () {
+    it('can reject a pending approval with reason', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -87,7 +87,7 @@ describe('Approval Aggregate', function () {
         expect($approval->getCompletedAt())->toBeInstanceOf(DateTimeImmutable::class);
     });
 
-    it('raises InvoiceRejected event when rejected', function () {
+    it('raises InvoiceRejected event when rejected', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -104,7 +104,7 @@ describe('Approval Aggregate', function () {
         expect($events[0]->reason)->toBe('Budget exceeded');
     });
 
-    it('cannot approve an already approved approval', function () {
+    it('cannot approve an already approved approval', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -115,7 +115,7 @@ describe('Approval Aggregate', function () {
         $approval->approve();
     })->throws(InvalidApprovalException::class, 'Cannot modify an already approved invoice');
 
-    it('cannot reject an already approved approval', function () {
+    it('cannot reject an already approved approval', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -126,7 +126,7 @@ describe('Approval Aggregate', function () {
         $approval->reject('Too late');
     })->throws(InvalidApprovalException::class, 'Cannot modify an already approved invoice');
 
-    it('cannot approve an already rejected approval', function () {
+    it('cannot approve an already rejected approval', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -137,7 +137,7 @@ describe('Approval Aggregate', function () {
         $approval->approve();
     })->throws(InvalidApprovalException::class, 'Cannot modify an already rejected invoice');
 
-    it('cannot reject an already rejected approval', function () {
+    it('cannot reject an already rejected approval', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -148,7 +148,7 @@ describe('Approval Aggregate', function () {
         $approval->reject('Second rejection');
     })->throws(InvalidApprovalException::class, 'Cannot modify an already rejected invoice');
 
-    it('throws exception for empty invoice id', function () {
+    it('throws exception for empty invoice id', function (): void {
         Approval::start(
             id: ApprovalId::generate(),
             invoiceId: '',
@@ -156,7 +156,7 @@ describe('Approval Aggregate', function () {
         );
     })->throws(InvalidApprovalException::class, 'Invoice ID cannot be empty');
 
-    it('preserves approval id', function () {
+    it('preserves approval id', function (): void {
         $id = ApprovalId::generate();
 
         $approval = Approval::start(

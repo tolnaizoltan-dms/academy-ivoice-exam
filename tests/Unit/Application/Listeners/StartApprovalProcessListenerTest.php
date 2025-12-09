@@ -11,14 +11,14 @@ use App\Infrastructure\Repositories\InMemoryApprovalRepository;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 
-describe('StartApprovalProcessListener (Policy)', function () {
-    beforeEach(function () {
+describe('StartApprovalProcessListener (Policy)', function (): void {
+    beforeEach(function (): void {
         $this->approvalRepository = new InMemoryApprovalRepository;
         $this->action = new StartApprovalProcessAction($this->approvalRepository);
         $this->listener = new StartApprovalProcessListener($this->action);
     });
 
-    it('starts approval process when invoice is submitted', function () {
+    it('starts approval process when invoice is submitted', function (): void {
         Event::fake([ApprovalProcessStarted::class]);
 
         $event = new InvoiceSubmitted(
@@ -40,7 +40,7 @@ describe('StartApprovalProcessListener (Policy)', function () {
         expect($approval->getStatus())->toBe(ApprovalStatus::PENDING);
     });
 
-    it('dispatches ApprovalProcessStarted event', function () {
+    it('dispatches ApprovalProcessStarted event', function (): void {
         Event::fake([ApprovalProcessStarted::class]);
 
         $event = new InvoiceSubmitted(
@@ -60,7 +60,7 @@ describe('StartApprovalProcessListener (Policy)', function () {
         });
     });
 
-    it('logs policy execution', function () {
+    it('logs policy execution', function (): void {
         Event::fake([ApprovalProcessStarted::class]);
         Log::shouldReceive('info')
             ->once()
@@ -82,7 +82,7 @@ describe('StartApprovalProcessListener (Policy)', function () {
         $this->listener->handle($event);
     });
 
-    it('uses supervisor as approver', function () {
+    it('uses supervisor as approver', function (): void {
         Event::fake([ApprovalProcessStarted::class]);
 
         $event = new InvoiceSubmitted(

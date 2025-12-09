@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Event;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 
-describe('Reject Invoice API', function () {
-    it('can reject a pending invoice with reason', function () {
+describe('Reject Invoice API', function (): void {
+    it('can reject a pending invoice with reason', function (): void {
         // First, submit an invoice to create an approval
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INV-2025-0010',
@@ -45,7 +45,7 @@ describe('Reject Invoice API', function () {
             ]);
     });
 
-    it('dispatches InvoiceRejected event', function () {
+    it('dispatches InvoiceRejected event', function (): void {
         Event::fake([InvoiceRejected::class]);
 
         // Submit invoice
@@ -70,14 +70,14 @@ describe('Reject Invoice API', function () {
         });
     });
 
-    it('validates reason is required', function () {
+    it('validates reason is required', function (): void {
         $response = putJson('/api/v1/approvals/some-id/reject', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['reason']);
     });
 
-    it('validates reason minimum length', function () {
+    it('validates reason minimum length', function (): void {
         $response = putJson('/api/v1/approvals/some-id/reject', [
             'reason' => 'ab',
         ]);
@@ -86,7 +86,7 @@ describe('Reject Invoice API', function () {
             ->assertJsonValidationErrors(['reason']);
     });
 
-    it('returns error for non-existent approval', function () {
+    it('returns error for non-existent approval', function (): void {
         $response = putJson('/api/v1/approvals/non-existent-id/reject', [
             'reason' => 'Some valid reason here',
         ]);
@@ -97,7 +97,7 @@ describe('Reject Invoice API', function () {
             ]);
     });
 
-    it('returns error when already rejected', function () {
+    it('returns error when already rejected', function (): void {
         // Submit and reject
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INV-2025-0012',
@@ -127,7 +127,7 @@ describe('Reject Invoice API', function () {
             ]);
     });
 
-    it('returns error when trying to reject an approved invoice', function () {
+    it('returns error when trying to reject an approved invoice', function (): void {
         // Submit and approve first
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INV-2025-0013',

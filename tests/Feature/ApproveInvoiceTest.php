@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Event;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 
-describe('Approve Invoice API', function () {
-    it('can approve a pending invoice', function () {
+describe('Approve Invoice API', function (): void {
+    it('can approve a pending invoice', function (): void {
         // First, submit an invoice to create an approval
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INV-2025-0001',
@@ -41,7 +41,7 @@ describe('Approve Invoice API', function () {
             ]);
     });
 
-    it('dispatches InvoiceApproved event', function () {
+    it('dispatches InvoiceApproved event', function (): void {
         Event::fake([InvoiceApproved::class]);
 
         // Submit invoice
@@ -62,7 +62,7 @@ describe('Approve Invoice API', function () {
         Event::assertDispatched(InvoiceApproved::class);
     });
 
-    it('returns error for non-existent approval', function () {
+    it('returns error for non-existent approval', function (): void {
         $response = putJson('/api/v1/approvals/non-existent-id/approve');
 
         $response->assertStatus(400)
@@ -71,7 +71,7 @@ describe('Approve Invoice API', function () {
             ]);
     });
 
-    it('returns error when already approved', function () {
+    it('returns error when already approved', function (): void {
         // Submit and approve
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INV-2025-0003',

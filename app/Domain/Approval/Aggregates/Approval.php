@@ -44,7 +44,7 @@ final class Approval extends AggregateRoot
         string $invoiceId,
         ApproverId $approverId,
     ): self {
-        if (empty($invoiceId)) {
+        if ($invoiceId === '' || $invoiceId === '0') {
             throw InvalidApprovalException::emptyInvoiceId();
         }
 

@@ -14,7 +14,7 @@ final readonly class ApproverId
     public function __construct(
         public string $value
     ) {
-        if (empty($value)) {
+        if ($value === '' || $value === '0') {
             throw InvalidApprovalException::emptyApproverId();
         }
     }

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 use function Pest\Laravel\postJson;
 
-describe('Approval Process Integration Test (Vertical Slice)', function () {
+describe('Approval Process Integration Test (Vertical Slice)', function (): void {
     /**
      * This test verifies the complete vertical slice:
      *
@@ -26,7 +26,7 @@ describe('Approval Process Integration Test (Vertical Slice)', function () {
      * 7. Approval aggregate raises ApprovalProcessStarted event
      * 8. All events are logged for traceability
      */
-    it('completes the full approval process flow', function () {
+    it('completes the full approval process flow', function (): void {
         // Arrange: Get fresh repository instances
         $invoiceRepository = app(InvoiceRepositoryInterface::class);
         $approvalRepository = app(ApprovalRepositoryInterface::class);
@@ -57,7 +57,7 @@ describe('Approval Process Integration Test (Vertical Slice)', function () {
         expect($approval->getStatus())->toBe(ApprovalStatus::PENDING);
     });
 
-    it('creates pending approval with supervisor as approver', function () {
+    it('creates pending approval with supervisor as approver', function (): void {
         $approvalRepository = app(ApprovalRepositoryInterface::class);
 
         $response = postJson('/api/v1/invoices', [
@@ -75,7 +75,7 @@ describe('Approval Process Integration Test (Vertical Slice)', function () {
         expect($approval->getStatus())->toBe(ApprovalStatus::PENDING);
     });
 
-    it('logs the policy execution', function () {
+    it('logs the policy execution', function (): void {
         // Arrange: Mock the Log facade
         Log::shouldReceive('info')
             ->once()
@@ -98,18 +98,18 @@ describe('Approval Process Integration Test (Vertical Slice)', function () {
         ]);
     });
 
-    it('triggers both domain events', function () {
+    it('triggers both domain events', function (): void {
         // We'll track events using a custom approach
         $eventsDispatched = [];
 
-        Event::listen(InvoiceSubmitted::class, function ($event) use (&$eventsDispatched) {
+        Event::listen(InvoiceSubmitted::class, function ($event) use (&$eventsDispatched): void {
             $eventsDispatched['InvoiceSubmitted'] = [
                 'invoiceId' => $event->invoiceId,
                 'invoiceNumber' => $event->invoiceNumber,
             ];
         });
 
-        Event::listen(ApprovalProcessStarted::class, function ($event) use (&$eventsDispatched) {
+        Event::listen(ApprovalProcessStarted::class, function ($event) use (&$eventsDispatched): void {
             $eventsDispatched['ApprovalProcessStarted'] = [
                 'invoiceId' => $event->invoiceId,
                 'approvalId' => $event->approvalId,
@@ -132,7 +132,7 @@ describe('Approval Process Integration Test (Vertical Slice)', function () {
             ->toBe($eventsDispatched['ApprovalProcessStarted']['invoiceId']);
     });
 
-    it('maintains data integrity across bounded contexts', function () {
+    it('maintains data integrity across bounded contexts', function (): void {
         $invoiceRepository = app(InvoiceRepositoryInterface::class);
         $approvalRepository = app(ApprovalRepositoryInterface::class);
 

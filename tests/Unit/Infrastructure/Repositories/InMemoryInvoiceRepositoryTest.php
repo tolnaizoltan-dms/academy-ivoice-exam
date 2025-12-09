@@ -9,12 +9,12 @@ use App\Domain\InvoiceReception\ValueObjects\InvoiceNumber;
 use App\Domain\InvoiceReception\ValueObjects\SubmitterId;
 use App\Infrastructure\Repositories\InMemoryInvoiceRepository;
 
-describe('InMemoryInvoiceRepository', function () {
-    beforeEach(function () {
+describe('InMemoryInvoiceRepository', function (): void {
+    beforeEach(function (): void {
         $this->repository = new InMemoryInvoiceRepository;
     });
 
-    it('can save and retrieve an invoice', function () {
+    it('can save and retrieve an invoice', function (): void {
         $invoice = Invoice::submit(
             id: InvoiceId::generate(),
             number: new InvoiceNumber('INV-2025-0001'),
@@ -31,20 +31,20 @@ describe('InMemoryInvoiceRepository', function () {
         expect($found->getNumber()->value)->toBe('INV-2025-0001');
     });
 
-    it('returns null for non-existent invoice', function () {
+    it('returns null for non-existent invoice', function (): void {
         $found = $this->repository->findById(new InvoiceId('non-existent'));
 
         expect($found)->toBeNull();
     });
 
-    it('generates unique identities', function () {
+    it('generates unique identities', function (): void {
         $id1 = $this->repository->nextIdentity();
         $id2 = $this->repository->nextIdentity();
 
         expect($id1->equals($id2))->toBeFalse();
     });
 
-    it('can retrieve all invoices', function () {
+    it('can retrieve all invoices', function (): void {
         $invoice1 = Invoice::submit(
             id: InvoiceId::generate(),
             number: new InvoiceNumber('INV-2025-0001'),
@@ -67,7 +67,7 @@ describe('InMemoryInvoiceRepository', function () {
         expect($this->repository->all())->toHaveCount(2);
     });
 
-    it('can clear all invoices', function () {
+    it('can clear all invoices', function (): void {
         $invoice = Invoice::submit(
             id: InvoiceId::generate(),
             number: new InvoiceNumber('INV-2025-0001'),

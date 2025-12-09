@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\postJson;
 
-describe('Submit Invoice API', function () {
-    it('can submit a valid invoice', function () {
+describe('Submit Invoice API', function (): void {
+    it('can submit a valid invoice', function (): void {
         Event::fake();
 
         $response = postJson('/api/v1/invoices', [
@@ -33,7 +33,7 @@ describe('Submit Invoice API', function () {
             ]);
     });
 
-    it('dispatches InvoiceSubmitted event', function () {
+    it('dispatches InvoiceSubmitted event', function (): void {
         Event::fake([InvoiceSubmitted::class]);
 
         postJson('/api/v1/invoices', [
@@ -51,14 +51,14 @@ describe('Submit Invoice API', function () {
         });
     });
 
-    it('validates required fields', function () {
+    it('validates required fields', function (): void {
         $response = postJson('/api/v1/invoices', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['invoiceNumber', 'amount', 'submitterId', 'supervisorId']);
     });
 
-    it('validates invoice number format', function () {
+    it('validates invoice number format', function (): void {
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INVALID-FORMAT',
             'amount' => 1000.00,
@@ -70,7 +70,7 @@ describe('Submit Invoice API', function () {
             ->assertJsonValidationErrors(['invoiceNumber']);
     });
 
-    it('validates amount is positive', function () {
+    it('validates amount is positive', function (): void {
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INV-2025-0001',
             'amount' => 0,
@@ -82,7 +82,7 @@ describe('Submit Invoice API', function () {
             ->assertJsonValidationErrors(['amount']);
     });
 
-    it('validates submitter id is uuid', function () {
+    it('validates submitter id is uuid', function (): void {
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INV-2025-0001',
             'amount' => 1000.00,
@@ -94,7 +94,7 @@ describe('Submit Invoice API', function () {
             ->assertJsonValidationErrors(['submitterId']);
     });
 
-    it('validates supervisor id is uuid', function () {
+    it('validates supervisor id is uuid', function (): void {
         $response = postJson('/api/v1/invoices', [
             'invoiceNumber' => 'INV-2025-0001',
             'amount' => 1000.00,

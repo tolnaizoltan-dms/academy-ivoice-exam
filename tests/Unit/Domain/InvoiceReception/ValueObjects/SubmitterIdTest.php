@@ -5,25 +5,25 @@ declare(strict_types=1);
 use App\Domain\InvoiceReception\Exceptions\InvalidInvoiceException;
 use App\Domain\InvoiceReception\ValueObjects\SubmitterId;
 
-describe('SubmitterId Value Object', function () {
-    it('creates valid submitter id', function () {
+describe('SubmitterId Value Object', function (): void {
+    it('creates valid submitter id', function (): void {
         $id = new SubmitterId('550e8400-e29b-41d4-a716-446655440000');
 
         expect($id->value)->toBe('550e8400-e29b-41d4-a716-446655440000');
         expect((string) $id)->toBe('550e8400-e29b-41d4-a716-446655440000');
     });
 
-    it('creates from string', function () {
+    it('creates from string', function (): void {
         $id = SubmitterId::fromString('user-123');
 
         expect($id->value)->toBe('user-123');
     });
 
-    it('throws exception for empty id', function () {
+    it('throws exception for empty id', function (): void {
         new SubmitterId('');
     })->throws(InvalidInvoiceException::class, 'Submitter ID cannot be empty');
 
-    it('compares equal ids correctly', function () {
+    it('compares equal ids correctly', function (): void {
         $id1 = new SubmitterId('user-1');
         $id2 = new SubmitterId('user-1');
         $id3 = new SubmitterId('user-2');

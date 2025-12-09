@@ -14,12 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 // Invoice API v1
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->group(function (): void {
     // Invoice endpoints
     // POST /api/v1/invoices - Submit a new invoice
     Route::post('/invoices', [InvoiceController::class, 'store'])

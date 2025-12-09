@@ -14,7 +14,7 @@ final readonly class ApprovalId
     public function __construct(
         public string $value
     ) {
-        if (empty($value)) {
+        if ($value === '' || $value === '0') {
             throw new \InvalidArgumentException('Approval ID cannot be empty.');
         }
     }

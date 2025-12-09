@@ -11,13 +11,13 @@ use App\Domain\Approval\ValueObjects\ApprovalStatus;
 use App\Infrastructure\Repositories\InMemoryApprovalRepository;
 use Illuminate\Support\Facades\Event;
 
-describe('StartApprovalProcessAction', function () {
-    beforeEach(function () {
+describe('StartApprovalProcessAction', function (): void {
+    beforeEach(function (): void {
         $this->repository = new InMemoryApprovalRepository;
         $this->action = new StartApprovalProcessAction($this->repository);
     });
 
-    it('starts an approval process', function () {
+    it('starts an approval process', function (): void {
         Event::fake();
 
         $data = new StartApprovalData(
@@ -33,7 +33,7 @@ describe('StartApprovalProcessAction', function () {
         expect($approval->getStatus())->toBe(ApprovalStatus::PENDING);
     });
 
-    it('persists the approval to repository', function () {
+    it('persists the approval to repository', function (): void {
         Event::fake();
 
         $data = new StartApprovalData(
@@ -48,7 +48,7 @@ describe('StartApprovalProcessAction', function () {
         expect($found->getId()->equals($approval->getId()))->toBeTrue();
     });
 
-    it('can find approval by invoice id', function () {
+    it('can find approval by invoice id', function (): void {
         Event::fake();
 
         $data = new StartApprovalData(
@@ -63,7 +63,7 @@ describe('StartApprovalProcessAction', function () {
         expect($found->getInvoiceId())->toBe('invoice-123');
     });
 
-    it('dispatches ApprovalProcessStarted event', function () {
+    it('dispatches ApprovalProcessStarted event', function (): void {
         Event::fake([ApprovalProcessStarted::class]);
 
         $data = new StartApprovalData(
@@ -79,7 +79,7 @@ describe('StartApprovalProcessAction', function () {
         });
     });
 
-    it('throws exception for empty approver id', function () {
+    it('throws exception for empty approver id', function (): void {
         Event::fake();
 
         $data = new StartApprovalData(
@@ -90,7 +90,7 @@ describe('StartApprovalProcessAction', function () {
         $this->action->execute($data);
     })->throws(InvalidApprovalException::class);
 
-    it('throws exception for empty invoice id', function () {
+    it('throws exception for empty invoice id', function (): void {
         Event::fake();
 
         $data = new StartApprovalData(

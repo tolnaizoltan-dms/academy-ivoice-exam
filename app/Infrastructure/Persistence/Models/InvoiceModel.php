@@ -56,8 +56,11 @@ class InvoiceModel extends Model
     /**
      * The attributes that should be cast.
      */
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'submitted_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'submitted_at' => 'datetime',
+        ];
+    }
 }

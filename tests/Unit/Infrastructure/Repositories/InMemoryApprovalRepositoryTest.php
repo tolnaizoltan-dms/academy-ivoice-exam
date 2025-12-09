@@ -7,12 +7,12 @@ use App\Domain\Approval\ValueObjects\ApprovalId;
 use App\Domain\Approval\ValueObjects\ApproverId;
 use App\Infrastructure\Repositories\InMemoryApprovalRepository;
 
-describe('InMemoryApprovalRepository', function () {
-    beforeEach(function () {
+describe('InMemoryApprovalRepository', function (): void {
+    beforeEach(function (): void {
         $this->repository = new InMemoryApprovalRepository;
     });
 
-    it('can save and retrieve an approval', function () {
+    it('can save and retrieve an approval', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -27,13 +27,13 @@ describe('InMemoryApprovalRepository', function () {
         expect($found->getInvoiceId())->toBe('invoice-123');
     });
 
-    it('returns null for non-existent approval', function () {
+    it('returns null for non-existent approval', function (): void {
         $found = $this->repository->findById(new ApprovalId('non-existent'));
 
         expect($found)->toBeNull();
     });
 
-    it('can find approval by invoice id', function () {
+    it('can find approval by invoice id', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',
@@ -47,20 +47,20 @@ describe('InMemoryApprovalRepository', function () {
         expect($found->getInvoiceId())->toBe('invoice-123');
     });
 
-    it('returns null when finding by non-existent invoice id', function () {
+    it('returns null when finding by non-existent invoice id', function (): void {
         $found = $this->repository->findByInvoiceId('non-existent');
 
         expect($found)->toBeNull();
     });
 
-    it('generates unique identities', function () {
+    it('generates unique identities', function (): void {
         $id1 = $this->repository->nextIdentity();
         $id2 = $this->repository->nextIdentity();
 
         expect($id1->equals($id2))->toBeFalse();
     });
 
-    it('can retrieve all approvals', function () {
+    it('can retrieve all approvals', function (): void {
         $approval1 = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-1',
@@ -79,7 +79,7 @@ describe('InMemoryApprovalRepository', function () {
         expect($this->repository->all())->toHaveCount(2);
     });
 
-    it('can clear all approvals', function () {
+    it('can clear all approvals', function (): void {
         $approval = Approval::start(
             id: ApprovalId::generate(),
             invoiceId: 'invoice-123',

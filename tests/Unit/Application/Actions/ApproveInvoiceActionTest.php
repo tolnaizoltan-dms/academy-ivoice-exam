@@ -12,13 +12,13 @@ use App\Domain\Approval\ValueObjects\ApproverId;
 use App\Infrastructure\Repositories\InMemoryApprovalRepository;
 use Illuminate\Support\Facades\Event;
 
-describe('ApproveInvoiceAction', function () {
-    beforeEach(function () {
+describe('ApproveInvoiceAction', function (): void {
+    beforeEach(function (): void {
         $this->repository = new InMemoryApprovalRepository;
         $this->action = new ApproveInvoiceAction($this->repository);
     });
 
-    it('approves a pending approval', function () {
+    it('approves a pending approval', function (): void {
         Event::fake();
 
         // Create a pending approval
@@ -37,7 +37,7 @@ describe('ApproveInvoiceAction', function () {
         expect($result->getCompletedAt())->not->toBeNull();
     });
 
-    it('dispatches InvoiceApproved event', function () {
+    it('dispatches InvoiceApproved event', function (): void {
         Event::fake([InvoiceApproved::class]);
 
         $approval = Approval::start(
@@ -55,13 +55,13 @@ describe('ApproveInvoiceAction', function () {
         });
     });
 
-    it('throws exception for non-existent approval', function () {
+    it('throws exception for non-existent approval', function (): void {
         Event::fake();
 
         $this->action->execute('non-existent-id');
     })->throws(InvalidApprovalException::class, 'Approval with ID non-existent-id not found');
 
-    it('throws exception when already approved', function () {
+    it('throws exception when already approved', function (): void {
         Event::fake();
 
         $approval = Approval::start(
@@ -76,7 +76,7 @@ describe('ApproveInvoiceAction', function () {
         $this->action->execute($approval->getId()->value);
     })->throws(InvalidApprovalException::class, 'Cannot modify an already approved invoice');
 
-    it('throws exception when already rejected', function () {
+    it('throws exception when already rejected', function (): void {
         Event::fake();
 
         $approval = Approval::start(

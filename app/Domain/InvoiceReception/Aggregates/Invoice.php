@@ -44,7 +44,7 @@ final class Invoice extends AggregateRoot
         SubmitterId $submitterId,
         string $supervisorId,
     ): self {
-        if (empty($supervisorId)) {
+        if ($supervisorId === '' || $supervisorId === '0') {
             throw InvalidInvoiceException::emptySupervisorId();
         }
 

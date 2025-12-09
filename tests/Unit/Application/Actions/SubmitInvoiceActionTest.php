@@ -10,13 +10,13 @@ use App\Domain\InvoiceReception\Exceptions\InvalidInvoiceException;
 use App\Infrastructure\Repositories\InMemoryInvoiceRepository;
 use Illuminate\Support\Facades\Event;
 
-describe('SubmitInvoiceAction', function () {
-    beforeEach(function () {
+describe('SubmitInvoiceAction', function (): void {
+    beforeEach(function (): void {
         $this->repository = new InMemoryInvoiceRepository;
         $this->action = new SubmitInvoiceAction($this->repository);
     });
 
-    it('submits a valid invoice', function () {
+    it('submits a valid invoice', function (): void {
         Event::fake();
 
         $data = new SubmitInvoiceData(
@@ -33,7 +33,7 @@ describe('SubmitInvoiceAction', function () {
         expect($invoice->getAmount()->getValue())->toBe(1500.50);
     });
 
-    it('persists the invoice to repository', function () {
+    it('persists the invoice to repository', function (): void {
         Event::fake();
 
         $data = new SubmitInvoiceData(
@@ -50,7 +50,7 @@ describe('SubmitInvoiceAction', function () {
         expect($found->getId()->equals($invoice->getId()))->toBeTrue();
     });
 
-    it('dispatches InvoiceSubmitted event', function () {
+    it('dispatches InvoiceSubmitted event', function (): void {
         Event::fake([InvoiceSubmitted::class]);
 
         $data = new SubmitInvoiceData(
@@ -70,7 +70,7 @@ describe('SubmitInvoiceAction', function () {
         });
     });
 
-    it('throws exception for invalid invoice number', function () {
+    it('throws exception for invalid invoice number', function (): void {
         Event::fake();
 
         $data = new SubmitInvoiceData(
@@ -83,7 +83,7 @@ describe('SubmitInvoiceAction', function () {
         $this->action->execute($data);
     })->throws(InvalidInvoiceException::class);
 
-    it('throws exception for negative amount', function () {
+    it('throws exception for negative amount', function (): void {
         Event::fake();
 
         $data = new SubmitInvoiceData(
@@ -96,7 +96,7 @@ describe('SubmitInvoiceAction', function () {
         $this->action->execute($data);
     })->throws(InvalidInvoiceException::class);
 
-    it('can create DTO from array', function () {
+    it('can create DTO from array', function (): void {
         $data = SubmitInvoiceData::fromArray([
             'invoiceNumber' => 'INV-2025-0001',
             'amount' => '1500.50',

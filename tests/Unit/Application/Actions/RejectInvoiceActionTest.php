@@ -12,13 +12,13 @@ use App\Domain\Approval\ValueObjects\ApproverId;
 use App\Infrastructure\Repositories\InMemoryApprovalRepository;
 use Illuminate\Support\Facades\Event;
 
-describe('RejectInvoiceAction', function () {
-    beforeEach(function () {
+describe('RejectInvoiceAction', function (): void {
+    beforeEach(function (): void {
         $this->repository = new InMemoryApprovalRepository;
         $this->action = new RejectInvoiceAction($this->repository);
     });
 
-    it('rejects a pending approval with reason', function () {
+    it('rejects a pending approval with reason', function (): void {
         Event::fake();
 
         // Create a pending approval
@@ -38,7 +38,7 @@ describe('RejectInvoiceAction', function () {
         expect($result->getCompletedAt())->not->toBeNull();
     });
 
-    it('dispatches InvoiceRejected event', function () {
+    it('dispatches InvoiceRejected event', function (): void {
         Event::fake([InvoiceRejected::class]);
 
         $approval = Approval::start(
@@ -57,13 +57,13 @@ describe('RejectInvoiceAction', function () {
         });
     });
 
-    it('throws exception for non-existent approval', function () {
+    it('throws exception for non-existent approval', function (): void {
         Event::fake();
 
         $this->action->execute('non-existent-id', 'Some reason');
     })->throws(InvalidApprovalException::class, 'Approval with ID non-existent-id not found');
 
-    it('throws exception when already approved', function () {
+    it('throws exception when already approved', function (): void {
         Event::fake();
 
         $approval = Approval::start(
@@ -78,7 +78,7 @@ describe('RejectInvoiceAction', function () {
         $this->action->execute($approval->getId()->value, 'Too late');
     })->throws(InvalidApprovalException::class, 'Cannot modify an already approved invoice');
 
-    it('throws exception when already rejected', function () {
+    it('throws exception when already rejected', function (): void {
         Event::fake();
 
         $approval = Approval::start(
