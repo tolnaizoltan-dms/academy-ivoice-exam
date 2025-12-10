@@ -46,6 +46,11 @@ final class EloquentInvoiceRepository implements InvoiceRepositoryInterface
         return $this->toDomain($model);
     }
 
+    public function existsByNumber(InvoiceNumber $number): bool
+    {
+        return InvoiceModel::where('invoice_number', $number->value)->exists();
+    }
+
     public function nextIdentity(): InvoiceId
     {
         return InvoiceId::generate();

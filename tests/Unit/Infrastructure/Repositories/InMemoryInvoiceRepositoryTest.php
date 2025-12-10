@@ -81,4 +81,22 @@ describe('InMemoryInvoiceRepository', function (): void {
 
         expect($this->repository->all())->toHaveCount(0);
     });
+
+    it('returns true when invoice with number exists', function (): void {
+        $invoice = Invoice::submit(
+            id: InvoiceId::generate(),
+            number: new InvoiceNumber('INV-2025-0001'),
+            amount: new Amount(1000.00),
+            submitterId: new SubmitterId('user-123'),
+            supervisorId: 'supervisor-456',
+        );
+
+        $this->repository->save($invoice);
+
+        expect($this->repository->existsByNumber(new InvoiceNumber('INV-2025-0001')))->toBeTrue();
+    });
+
+    it('returns false when invoice with number does not exist', function (): void {
+        expect($this->repository->existsByNumber(new InvoiceNumber('INV-2025-0001')))->toBeFalse();
+    });
 });

@@ -34,4 +34,11 @@ final class InvalidInvoiceException extends DomainException
     {
         return new self('Supervisor ID cannot be empty.');
     }
+
+    public static function duplicateInvoiceNumber(string $number): self
+    {
+        return new self(
+            sprintf('An invoice with number %s already exists.', $number)
+        );
+    }
 }

@@ -96,6 +96,23 @@ describe('SubmitInvoiceAction', function (): void {
         $this->action->execute($data);
     })->throws(InvalidInvoiceException::class);
 
+    it('throws exception for duplicate invoice number', function (): void {
+        Event::fake();
+
+        $data = new SubmitInvoiceData(
+            invoiceNumber: 'INV-2025-0001',
+            amount: 1000.00,
+            submitterId: 'user-123',
+            supervisorId: 'supervisor-456',
+        );
+
+        // First submission should succeed
+        $this->action->execute($data);
+
+        // Second submission with same invoice number should fail
+        $this->action->execute($data);
+    })->throws(InvalidInvoiceException::class, 'An invoice with number INV-2025-0001 already exists.');
+
     it('can create DTO from array', function (): void {
         $data = SubmitInvoiceData::fromArray([
             'invoiceNumber' => 'INV-2025-0001',

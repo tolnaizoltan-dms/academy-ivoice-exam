@@ -6,6 +6,7 @@ namespace App\Domain\InvoiceReception\Contracts;
 
 use App\Domain\InvoiceReception\Aggregates\Invoice;
 use App\Domain\InvoiceReception\ValueObjects\InvoiceId;
+use App\Domain\InvoiceReception\ValueObjects\InvoiceNumber;
 
 /**
  * Repository contract for Invoice aggregate persistence.
@@ -21,6 +22,11 @@ interface InvoiceRepositoryInterface
      * Find an invoice by its ID.
      */
     public function findById(InvoiceId $id): ?Invoice;
+
+    /**
+     * Check if an invoice with the given number already exists.
+     */
+    public function existsByNumber(InvoiceNumber $number): bool;
 
     /**
      * Generate a new unique identity for an invoice.

@@ -7,6 +7,7 @@ namespace App\Application\Actions;
 use App\Application\DTOs\SubmitInvoiceData;
 use App\Domain\InvoiceReception\Aggregates\Invoice;
 use App\Domain\InvoiceReception\Contracts\InvoiceRepositoryInterface;
+use App\Domain\InvoiceReception\Exceptions\InvalidInvoiceException;
 use App\Domain\InvoiceReception\ValueObjects\Amount;
 use App\Domain\InvoiceReception\ValueObjects\InvoiceNumber;
 use App\Domain\InvoiceReception\ValueObjects\SubmitterId;
@@ -34,6 +35,11 @@ final class SubmitInvoiceAction
         $invoiceNumber = new InvoiceNumber($data->invoiceNumber);
         $amount = new Amount($data->amount);
         $submitterId = new SubmitterId($data->submitterId);
+
+        // Check for duplicate invoice number
+        if ($this->invoiceRepository->existsByNumber($invoiceNumber)) {
+            throw InvalidInvoiceException::duplicateInvoiceNumber($invoiceNumber->value);
+        }
 
         // Create Invoice aggregate via factory method
         $invoice = Invoice::submit(

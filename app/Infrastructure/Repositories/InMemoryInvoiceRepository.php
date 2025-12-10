@@ -7,6 +7,7 @@ namespace App\Infrastructure\Repositories;
 use App\Domain\InvoiceReception\Aggregates\Invoice;
 use App\Domain\InvoiceReception\Contracts\InvoiceRepositoryInterface;
 use App\Domain\InvoiceReception\ValueObjects\InvoiceId;
+use App\Domain\InvoiceReception\ValueObjects\InvoiceNumber;
 
 /**
  * In-memory implementation of Invoice Repository.
@@ -27,6 +28,17 @@ final class InMemoryInvoiceRepository implements InvoiceRepositoryInterface
     public function findById(InvoiceId $id): ?Invoice
     {
         return $this->invoices[$id->value] ?? null;
+    }
+
+    public function existsByNumber(InvoiceNumber $number): bool
+    {
+        foreach ($this->invoices as $invoice) {
+            if ($invoice->getNumber()->equals($number)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function nextIdentity(): InvoiceId

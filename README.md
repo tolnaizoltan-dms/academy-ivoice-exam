@@ -2,7 +2,7 @@
 
 ## Projekt Áttekintés
 
-Ez a projekt a DMS One Fejlesztői Akadémia vizsgafeladata, amely egy **Jóváhagyási Folyamat** vertical slice implementációja Domain-Driven Design (DDD) elvek alapján.
+Ez a projekt a DMS One Fejlesztői Akadémia vizsgafeladata, amely egy **Jóváhagyási Folyamat** implementációja Domain-Driven Design elvek alapján.
 
 ### Use Case
 
@@ -37,8 +37,6 @@ InvoiceSubmitted → [Policy: StartApprovalProcessListener] → Approval created
 - **Database**: MySQL 8.0 (SQLite for tests)
 - **Container**: Docker (Laravel Sail)
 
-## Telepítés és Indítás
-
 ### Követelmények
 
 - Docker & Docker Compose
@@ -54,6 +52,8 @@ cd invoice
 # 2. Environment setup
 cp .env.example .env
 
+composer install # a sail csomag telepitese szukseges a futtatashoz
+
 # 3. Build & Install
 ./vendor/bin/sail up -d
 ./vendor/bin/sail composer install
@@ -68,6 +68,11 @@ cp .env.example .env
 
 ```bash
 ./vendor/bin/sail down
+```
+
+```bash
+# szukseg eseten adatbazis adatok torlese
+./vendor/bin/sail artisan migrate:fresh
 ```
 
 ## API Használat
@@ -86,7 +91,7 @@ A teljes API dokumentáció OpenAPI 3.0 formátumban elérhető: [`docs/openapi.
 
 **Submit Invoice:**
 ```bash
-curl -X POST http://localhost/api/v1/invoices \
+curl -X POST http://localhost:8084/api/v1/invoices \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{
@@ -99,13 +104,13 @@ curl -X POST http://localhost/api/v1/invoices \
 
 **Approve Invoice:**
 ```bash
-curl -X PUT http://localhost/api/v1/approvals/{approval-id}/approve \
+curl -X PUT http://localhost:8084/api/v1/approvals/{approval-id}/approve \
   -H "Accept: application/json"
 ```
 
 **Reject Invoice:**
 ```bash
-curl -X PUT http://localhost/api/v1/approvals/{approval-id}/reject \
+curl -X PUT http://localhost:8084/api/v1/approvals/{approval-id}/reject \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{"reason": "Insufficient documentation provided."}'
@@ -185,23 +190,12 @@ Log fájl: `storage/logs/laravel.log`
 A projekt Laravel Sail-t használ, ami Docker Compose-ra épül.
 
 **Szolgáltatások:**
-- `laravel.test` - PHP 8.4 + Nginx
+- `invoice.test` - PHP 8.4 - php artisan serve parancs indul
 - `mysql` - MySQL 8.0
 
 **Konfiguráció:** `compose.yaml`
-
-## Modern PHP Features
-
-- `readonly` properties (PHP 8.1+)
-- Backed Enums (`ApprovalStatus`)
-- Constructor Property Promotion
-- Named Arguments
-- Typed Properties
-- Match Expression (status transitions)
 
 ## Hivatkozások
 
 - [Laravel 12 Documentation](https://laravel.com/docs/12.x)
 - [Pest Testing Framework](https://pestphp.com/)
-- [DDD Aggregates](https://martinfowler.com/bliki/DDD_Aggregate.html)
-- [Event Storming](https://www.eventstorming.com/)
