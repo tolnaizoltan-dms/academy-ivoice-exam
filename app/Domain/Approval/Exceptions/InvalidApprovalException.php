@@ -21,13 +21,6 @@ final class InvalidApprovalException extends DomainException
         return new self('Cannot modify an already rejected invoice.');
     }
 
-    public static function invalidStatusTransition(string $from, string $to): self
-    {
-        return new self(
-            sprintf('Cannot transition from %s to %s.', $from, $to)
-        );
-    }
-
     public static function emptyApproverId(): self
     {
         return new self('Approver ID cannot be empty.');
