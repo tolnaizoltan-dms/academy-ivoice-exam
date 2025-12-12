@@ -96,4 +96,32 @@ describe('Approve Invoice API', function (): void {
                 'message' => 'Cannot modify an already approved invoice.',
             ]);
     });
+
+    it('returns error when trying to approve a rejected invoice', function (): void {
+        // Submit invoice
+        $response = postJson('/api/v1/invoices', [
+            'invoiceNumber' => 'INV-2025-0004',
+            'amount' => 4000.00,
+            'submitterId' => '550e8400-e29b-41d4-a716-446655440000',
+            'supervisorId' => '550e8400-e29b-41d4-a716-446655440001',
+        ]);
+
+        $invoiceId = $response->json('invoiceId');
+        $approvalRepository = app(ApprovalRepositoryInterface::class);
+        $approval = $approvalRepository->findByInvoiceId($invoiceId);
+
+        // First reject
+        putJson("/api/v1/approvals/{$approval->getId()->value}/reject", [
+            'reason' => 'Budget exceeded',
+        ]);
+
+        // Try to approve rejected invoice
+        $approveResponse = putJson("/api/v1/approvals/{$approval->getId()->value}/approve");
+
+        $approveResponse->assertStatus(400)
+            ->assertJson([
+                'error' => 'Approval failed',
+                'message' => 'Cannot modify an already rejected invoice.',
+            ]);
+    });
 });

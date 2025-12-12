@@ -105,4 +105,30 @@ describe('Submit Invoice API', function (): void {
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['supervisorId']);
     });
+
+    it('returns 400 for duplicate invoice number', function (): void {
+        Event::fake();
+
+        // Submit first invoice
+        postJson('/api/v1/invoices', [
+            'invoiceNumber' => 'INV-2025-9999',
+            'amount' => 1000.00,
+            'submitterId' => '550e8400-e29b-41d4-a716-446655440000',
+            'supervisorId' => '550e8400-e29b-41d4-a716-446655440001',
+        ])->assertStatus(201);
+
+        // Try to submit duplicate
+        $response = postJson('/api/v1/invoices', [
+            'invoiceNumber' => 'INV-2025-9999',
+            'amount' => 2000.00,
+            'submitterId' => '550e8400-e29b-41d4-a716-446655440002',
+            'supervisorId' => '550e8400-e29b-41d4-a716-446655440003',
+        ]);
+
+        $response->assertStatus(400)
+            ->assertJson([
+                'error' => 'Invalid invoice data',
+                'message' => 'An invoice with number INV-2025-9999 already exists.',
+            ]);
+    });
 });
