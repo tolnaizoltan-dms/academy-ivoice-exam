@@ -34,7 +34,7 @@ InvoiceSubmitted → [Policy: StartApprovalProcessListener] → Approval created
 - **PHP**: 8.2+
 - **Framework**: Laravel 12
 - **Testing**: Pest 4 + Laravel Plugin
-- **Database**: MySQL 8.0 SQLite tesztekhez)
+- **Database**: MySQL 8.0, (SQLite integracios tesztekhez)
 - **Container**: Docker (Laravel Sail)
 - **Kódminőség**: Pint (PHP CS Fixer), Rector, Larastan (PHPStan)
 
