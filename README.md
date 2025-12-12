@@ -34,12 +34,14 @@ InvoiceSubmitted → [Policy: StartApprovalProcessListener] → Approval created
 - **PHP**: 8.2+
 - **Framework**: Laravel 12
 - **Testing**: Pest 4 + Laravel Plugin
-- **Database**: MySQL 8.0 (SQLite for tests)
+- **Database**: MySQL 8.0 SQLite tesztekhez)
 - **Container**: Docker (Laravel Sail)
+- **Kódminőség**: Pint (PHP CS Fixer), Rector, Larastan (PHPStan)
 
-### Követelmények
+### Követelmények a futtatáshoz
 
 - Docker & Docker Compose
+- PHP 8.4
 - Git
 
 ### Telepítés
@@ -52,34 +54,35 @@ cd invoice
 # 2. Environment setup
 cp .env.example .env
 
-composer install # a sail csomag telepitese szukseges a futtatashoz
+# 3. a sail csomag telepitese szukseges a kontenerek letrehozasahoz
+composer install 
 
-# 3. Build & Install
+# 4. Build & Install
 ./vendor/bin/sail up -d
 ./vendor/bin/sail composer install
 ./vendor/bin/sail artisan key:generate
 ./vendor/bin/sail artisan migrate
 
-# 4. Health check
+# 5. Health check
 ./vendor/bin/sail exec laravel.test curl http://localhost/up
 ```
 
 ### Leállítás
 
 ```bash
-./vendor/bin/sail down
+# szukseg eseten adatbazis adatok torlese
+./vendor/bin/sail artisan migrate:fresh
 ```
 
 ```bash
-# szukseg eseten adatbazis adatok torlese
-./vendor/bin/sail artisan migrate:fresh
+./vendor/bin/sail down
 ```
 
 ## API Használat
 
 A teljes API dokumentáció OpenAPI 3.0 formátumban elérhető: [`docs/openapi.yaml`](docs/openapi.yaml)
 
-### Endpoints
+### Végpontok
 
 | Művelet | Endpoint | Leírás |
 |---------|----------|--------|
@@ -118,6 +121,12 @@ curl -X PUT http://localhost:8084/api/v1/approvals/{approval-id}/reject \
 
 ## Tesztelés
 
+Tesztek típusai:
+- unit tesztek
+- integrációs tesztek
+- architekturális tesztek
+- TODO: mutációs tesztelés
+
 ### Tesztek Futtatása
 
 ```bash
@@ -136,14 +145,6 @@ curl -X PUT http://localhost:8084/api/v1/approvals/{approval-id}/reject \
 # Feature (integration) tesztek
 ./vendor/bin/sail test tests/Feature
 ```
-
-### Test Típusok
-
-| Típus | Leírás | Darabszám |
-|-------|--------|-----------|
-| Unit | Value Objects, Aggregates, Actions | 92 |
-| Feature | API Integration, Vertical Slice | 23 |
-| **Total** | | **115** |
 
 ## DDD Implementáció
 
@@ -183,14 +184,14 @@ A Policy végrehajtása logolja az automatizált folyamatot:
        {"approval_id": "...", "invoice_id": "...", "status": "pending"}
 ```
 
-Log fájl: `storage/logs/laravel.log`
+Log fájlok: `storage/logs/`
 
 ## Docker
 
 A projekt Laravel Sail-t használ, ami Docker Compose-ra épül.
 
 **Szolgáltatások:**
-- `invoice.test` - PHP 8.4 - php artisan serve parancs indul
+- `invoice.test` - PHP 8.4
 - `mysql` - MySQL 8.0
 
 **Konfiguráció:** `compose.yaml`

@@ -52,7 +52,7 @@
 - **Events & Listeners**: Policy implementáció (InvoiceSubmitted → StartApprovalProcess)
 - **Form Requests**: Input validation
 - **Collections**: Domain collections
-- **Eloquent/Query Builder**: Persistence (optional - inkább in-memory repositories)
+- **Eloquent/Query Builder**: Persistence
 - **Logging**: Monolog via Log facade
 - **Testing**: Pest + Feature/Unit tests
 
@@ -160,7 +160,7 @@ invoice/
 - **PHP**: 8.2+ (Laravel 12 requirement)
 - **Framework**: Laravel 12
 - **Testing**: Pest 4 + Pest Plugin Laravel
-- **Database**: SQLite (in-memory for tests, file for dev)
+- **Database**: MySQL 8.0, SQLite
 - **Container**: Laravel Sail (Docker Compose)
 - **Event System**: Laravel Events
 - **DI**: Laravel Service Container
@@ -869,7 +869,7 @@ curl -X POST http://localhost/api/v1/invoices \
 ```
 
 #### 11.3 Docker Compose Ellenőrzés
-- [ ] `docker-compose.yml` (Laravel Sail) működik
+- [ ] `compose.yml` (Laravel Sail) működik
 - [ ] Environment variables dokumentálása
 - [ ] Volumes és networks ellenőrzése
 
@@ -882,7 +882,7 @@ curl -X POST http://localhost/api/v1/invoices \
   ./vendor/bin/sail test
   ```
 - [ ] API manual testing
-- [ ] Log fájlok ellenőrzése (`storage/logs/laravel.log`)
+- [ ] Log fájlok ellenőrzése (`storage/logs/`)
 
 ---
 
