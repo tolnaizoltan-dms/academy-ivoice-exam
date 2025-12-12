@@ -18,8 +18,8 @@ return RectorConfig::configure()
     ])
     // uncomment to reach your current PHP version
     // ->withPhpSets()
-    ->withTypeCoverageLevel(0)
-    ->withDeadCodeLevel(0)
+    ->withTypeCoverageLevel(10)
+    ->withDeadCodeLevel(10)
     ->withSets([
         LaravelLevelSetList::UP_TO_LARAVEL_120,
         SetList::CODE_QUALITY,
