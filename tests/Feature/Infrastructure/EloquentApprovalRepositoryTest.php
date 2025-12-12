@@ -9,7 +9,7 @@ use App\Infrastructure\Persistence\Repositories\EloquentApprovalRepository;
 
 describe('EloquentApprovalRepository', function (): void {
     beforeEach(function (): void {
-        $this->repository = new EloquentApprovalRepository();
+        $this->repository = new EloquentApprovalRepository;
     });
 
     it('can save and retrieve an approval', function (): void {

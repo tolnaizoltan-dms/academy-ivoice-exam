@@ -11,7 +11,7 @@ use App\Infrastructure\Persistence\Repositories\EloquentInvoiceRepository;
 
 describe('EloquentInvoiceRepository', function (): void {
     beforeEach(function (): void {
-        $this->repository = new EloquentInvoiceRepository();
+        $this->repository = new EloquentInvoiceRepository;
     });
 
     it('can save and retrieve an invoice', function (): void {

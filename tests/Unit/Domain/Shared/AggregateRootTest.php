@@ -29,13 +29,13 @@ class TestEvent
 describe('AggregateRoot', function (): void {
 
     it('starts with no recorded events', function (): void {
-        $aggregate = new TestAggregate();
+        $aggregate = new TestAggregate;
 
         expect($aggregate->getRecordedEvents())->toBeEmpty();
     });
 
     it('records a single event', function (): void {
-        $aggregate = new TestAggregate();
+        $aggregate = new TestAggregate;
         $event = new TestEvent('test');
 
         $aggregate->doSomething($event);
@@ -45,7 +45,7 @@ describe('AggregateRoot', function (): void {
     });
 
     it('records multiple events in order', function (): void {
-        $aggregate = new TestAggregate();
+        $aggregate = new TestAggregate;
         $event1 = new TestEvent('first');
         $event2 = new TestEvent('second');
         $event3 = new TestEvent('third');
@@ -61,7 +61,7 @@ describe('AggregateRoot', function (): void {
     });
 
     it('releases events and clears internal list', function (): void {
-        $aggregate = new TestAggregate();
+        $aggregate = new TestAggregate;
         $event = new TestEvent('test');
 
         $aggregate->doSomething($event);
@@ -73,7 +73,7 @@ describe('AggregateRoot', function (): void {
     });
 
     it('returns empty array when releasing with no events', function (): void {
-        $aggregate = new TestAggregate();
+        $aggregate = new TestAggregate;
 
         $released = $aggregate->releaseEvents();
 
@@ -81,7 +81,7 @@ describe('AggregateRoot', function (): void {
     });
 
     it('can record events after releasing', function (): void {
-        $aggregate = new TestAggregate();
+        $aggregate = new TestAggregate;
         $event1 = new TestEvent('first');
         $event2 = new TestEvent('second');
 
@@ -95,7 +95,7 @@ describe('AggregateRoot', function (): void {
     });
 
     it('getRecordedEvents does not clear the list', function (): void {
-        $aggregate = new TestAggregate();
+        $aggregate = new TestAggregate;
         $event = new TestEvent('test');
 
         $aggregate->doSomething($event);
@@ -108,7 +108,7 @@ describe('AggregateRoot', function (): void {
     });
 
     it('accumulates events across multiple operations', function (): void {
-        $aggregate = new TestAggregate();
+        $aggregate = new TestAggregate;
 
         $aggregate->doSomething(new TestEvent('first'));
         $aggregate->doSomething(new TestEvent('second'));

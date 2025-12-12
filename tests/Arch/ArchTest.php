@@ -101,4 +101,3 @@ arch('requests should have Request suffix')
 arch('requests should extend FormRequest')
     ->expect('App\Http\Requests')
     ->toExtend('Illuminate\Foundation\Http\FormRequest');
-
