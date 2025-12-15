@@ -64,7 +64,7 @@ composer install
 ./vendor/bin/sail artisan migrate
 
 # 5. Health check
-./vendor/bin/sail exec laravel.test curl http://localhost/up
+./vendor/bin/sail exec invoice.test curl http://localhost/up
 ```
 
 ### Leállítás
