@@ -191,6 +191,15 @@ A projekt Laravel Sail-t használ, ami Docker Compose-ra épül.
 
 **Konfiguráció:** `compose.yaml`
 
+**Hibakeresés**
+
+Az alkalmazás minden hibát a `storage/logs/` könyvtárba logol.
+
+Az adatbázis szerverhez a következő paranccsal lehet kapcsolódni:
+```
+docker exec -it academy-ivoice-exam-mysql-1 mysql
+```
+
 ## Hivatkozások
 
 - [Laravel 12 Documentation](https://laravel.com/docs/12.x)
