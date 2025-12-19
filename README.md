@@ -44,20 +44,30 @@ InvoiceSubmitted → [Policy: StartApprovalProcessListener] → Approval created
 - PHP 8.4
 - Git
 
-### Telepítés
+### Docker
+
+A projekt Laravel Sail-t használ, ami Docker Compose-ra épül.
+
+**Szolgáltatások:**
+- `invoice.test` - PHP 8.4
+- `mysql` - MySQL 8.0
+
+**Konfiguráció:** `compose.yaml`
+
+### Telepítés, indítás
 
 ```bash
-# 1. Klónozás
+# Klónozás
 git clone <repo-url>
-cd invoice
+cd academy-invoice-exam
 
-# 2. Environment setup
+# Environment setup
 cp .env.example .env
 
-# 3. a sail csomag telepitese szukseges a kontenerek letrehozasahoz
+# A sail csomag telepitese miatt szukseges a kontenerek letrehozasahoz
 composer install 
 
-# 4. Build & Install
+# Build & Install
 ./vendor/bin/sail up -d
 ./vendor/bin/sail composer install
 ./vendor/bin/sail artisan key:generate
@@ -65,6 +75,19 @@ composer install
 
 # 5. Health check
 ./vendor/bin/sail exec invoice.test curl http://localhost/up
+```
+
+### Kódminőség ellenőrzés
+
+```bash
+# Kódolási stílus ellenőrzés
+./vendor/bin/pint --test
+
+# kód modernizálás, refaktorálási lehetőségek keresése
+./vendor/bin/rector --dry-run
+
+# Statikus analízis
+./vendor/bin/phpstan analyse
 ```
 
 ### Leállítás
@@ -180,16 +203,6 @@ A Policy végrehajtása logolja az automatizált folyamatot:
 ```
 
 Log fájlok: `storage/logs/`
-
-## Docker
-
-A projekt Laravel Sail-t használ, ami Docker Compose-ra épül.
-
-**Szolgáltatások:**
-- `invoice.test` - PHP 8.4
-- `mysql` - MySQL 8.0
-
-**Konfiguráció:** `compose.yaml`
 
 **Hibakeresés**
 
