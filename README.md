@@ -70,11 +70,6 @@ composer install
 ### Leállítás
 
 ```bash
-# szukseg eseten adatbazis adatok torlese
-./vendor/bin/sail artisan migrate:fresh
-```
-
-```bash
 ./vendor/bin/sail down
 ```
 
@@ -87,8 +82,8 @@ A teljes API dokumentáció OpenAPI 3.0 formátumban elérhető: [`docs/openapi.
 | Művelet | Endpoint | Leírás |
 |---------|----------|--------|
 | Submit Invoice | `POST /api/v1/invoices` | Új számla benyújtása |
-| Approve Invoice | `PUT /api/v1/approvals/{id}/approve` | Számla jóváhagyása |
-| Reject Invoice | `PUT /api/v1/approvals/{id}/reject` | Számla elutasítása |
+| Approve Invoice | `PUT /api/v1/approvals/{approval-id}/approve` | Számla jóváhagyása |
+| Reject Invoice | `PUT /api/v1/approvals/{approval-id}/reject` | Számla elutasítása |
 
 ### cURL Példák
 
